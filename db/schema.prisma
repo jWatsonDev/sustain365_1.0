@@ -1,0 +1,51 @@
+// Prisma schema for Vercel Postgres
+// Place this file in /db/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  emailVerified DateTime?
+  image         String?
+  dayLogs       DayLog[]
+  weekLogs      WeekLog[]
+  createdAt     DateTime @default(now())
+}
+
+model DayLog {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  date      DateTime
+  prayer    Boolean  @default(false)
+  bible     Boolean  @default(false)
+  nonfiction Boolean @default(false)
+  workout   Boolean  @default(false)
+  waterOz   Int      @default(0)
+  foodTracked Boolean @default(false)
+  cheatDay  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WeekLog {
+  id           String   @id @default(cuid())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+  weekStart    DateTime
+  movementDays Int      @default(0)
+  cheatMeals   Int      @default(0)
+  cheatDay     Boolean  @default(false)
+  flexWeek     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
